@@ -1,0 +1,69 @@
+#! /usr/bin/python3
+import argparse
+import os
+import platform
+import subprocess
+import sys
+
+SCRIPT_LOCATION = "./tmux-install.sh"
+VERSIONS = {
+    "2.7_CentOS_7.4.1708": {"NCURSES_VERSION": "6.0", "LIBEVENT_VERSION": "2.0.22"},
+    "2.9a_Ubuntu_18.04": {"NCURSES_VERSION": "6.1", "LIBEVENT_VERSION": "2.1.8"},
+    "3.0-rc_Ubuntu_18.04": {"NCURSES_VERSION": "6.1", "LIBEVENT_VERSION": "2.1.8"},
+}
+
+
+def parser():
+    arg_parser = argparse.ArgumentParser()
+    arg_parser.add_argument(
+        "--version",
+        action="store",
+        help="Set the tmux version to install. Default: latest",
+        choices=[ver.split("_")[0] for ver in VERSIONS],
+    )
+    arg_parser.add_argument(
+        "--install-dir",
+        action="store",
+        help="Set the install dir. Default: %s/tmux-static" % os.environ["HOME"],
+    )
+    args = arg_parser.parse_args()
+    if not args.version:
+        print("Specify a tmux version!")
+        arg_parser.print_help()
+    return args
+
+
+def set_versions(tmux_version):
+    distribution = "_".join([x.split()[0] for x in platform.linux_distribution()[:-1]])
+
+    print("Checking dependancy for current distribution : %s" % distribution)
+    versions = VERSIONS.get("%s_%s" % (tmux_version, distribution), {})
+    if not versions:
+        print(" Your distribution has no valid versions set!")
+        sys.exit(1)
+
+    os.environ["TMUX_VERSION"] = tmux_version
+    for env_var in ["NCURSES_VERSION", "LIBEVENT_VERSION"]:
+        os.environ[env_var] = versions.get(env_var)
+
+
+def set_install_dir(install_dir):
+    if install_dir:
+        os.environ["TMUX_INSTALL_DIR"] = install_dir
+
+
+def run_script():
+    process = subprocess.Popen(SCRIPT_LOCATION, stdout=subprocess.PIPE)
+    for line in process.stdout:
+        print(line.decode("utf-8"))
+    process.wait()
+
+
+def main():
+    args = parser()
+    set_versions(args.version)
+    set_install_dir(args.install_dir)
+    run_script()
+
+
+main()
