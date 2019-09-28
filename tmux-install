@@ -13,22 +13,34 @@ VERSIONS = {
 }
 
 
+def log(msg):
+    print(msg)
+
+
+def get_available_versions():
+    return [ver.split("_")[0] for ver in VERSIONS]
+
+
+def get_default_install_dir():
+    return "%s/tmux-static" % os.environ["HOME"]
+
+
 def parser():
     arg_parser = argparse.ArgumentParser()
     arg_parser.add_argument(
         "--version",
         action="store",
         help="Set the tmux version to install. Default: latest",
-        choices=[ver.split("_")[0] for ver in VERSIONS],
+        choices=get_available_versions(),
     )
     arg_parser.add_argument(
         "--install-dir",
         action="store",
-        help="Set the install dir. Default: %s/tmux-static" % os.environ["HOME"],
+        help="Set the install dir. Default: %s" % get_default_install_dir(),
     )
     args = arg_parser.parse_args()
     if not args.version:
-        print("Specify a tmux version!")
+        log("Specify a tmux version!")
         arg_parser.print_help()
     return args
 
@@ -36,10 +48,10 @@ def parser():
 def set_versions(tmux_version):
     distribution = "_".join([x.split()[0] for x in platform.linux_distribution()[:-1]])
 
-    print("Checking dependancy for current distribution : %s" % distribution)
+    log("Checking dependancy for current distribution : %s" % distribution)
     versions = VERSIONS.get("%s_%s" % (tmux_version, distribution), {})
     if not versions:
-        print(" Your distribution has no valid versions set!")
+        log(" Your distribution has no valid versions set!")
         sys.exit(1)
 
     os.environ["TMUX_VERSION"] = tmux_version
@@ -48,14 +60,15 @@ def set_versions(tmux_version):
 
 
 def set_install_dir(install_dir):
-    if install_dir:
+    if not install_dir:
+        install_dir = get_default_install_dir()
         os.environ["TMUX_INSTALL_DIR"] = install_dir
 
 
 def run_script():
     process = subprocess.Popen(SCRIPT_LOCATION, stdout=subprocess.PIPE)
     for line in process.stdout:
-        print(line.decode("utf-8"))
+        log(line.decode("utf-8"))
     process.wait()
 
 
