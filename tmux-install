@@ -9,7 +9,7 @@ SCRIPT_LOCATION = "./tmux-install.sh"
 VERSIONS = {
     "2.7_CentOS_7.4.1708": {"NCURSES_VERSION": "6.0", "LIBEVENT_VERSION": "2.0.22"},
     "2.9a_Ubuntu_18.04": {"NCURSES_VERSION": "6.1", "LIBEVENT_VERSION": "2.1.8"},
-    "3.0-rc_Ubuntu_18.04": {"NCURSES_VERSION": "6.1", "LIBEVENT_VERSION": "2.1.8"},
+    "3.0-rc5_Ubuntu_18.04": {"NCURSES_VERSION": "6.1", "LIBEVENT_VERSION": "2.1.11"},
 }
 
 
@@ -62,7 +62,7 @@ def set_versions(tmux_version):
 def set_install_dir(install_dir):
     if not install_dir:
         install_dir = get_default_install_dir()
-        os.environ["TMUX_INSTALL_DIR"] = install_dir
+    os.environ["TMUX_INSTALL_DIR"] = install_dir
 
 
 def run_script():
