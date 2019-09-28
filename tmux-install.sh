@@ -21,6 +21,12 @@ output_info () {
 
 output_info "tmux-${TMUX_VERSION} will be installed in : ${TMUXTARGET}"
 
+#remove rc from tmux versions like 3.0-rc5
+IFS='-'
+read -ra ADDR <<< "$TMUX_VERSION"
+TMUX_MAJOR_VERSION=${ADDR[0]}
+IFS=' '
+
 ## Fetch dependencies
 mkdir -p $TMPDIR
 cd $TMPDIR
@@ -34,7 +40,7 @@ if [ ! -f ncurses-${NCURSES_VERSION}.tar.gz ]; then
 fi
 if [ ! -f tmux-${TMUX_VERSION}.tar.gz ]; then
         output_info "Fetching : tmux-${TMUX_VERSION}"
-        wget -q -O tmux-${TMUX_VERSION}.tar.gz https://github.com/tmux/tmux/releases/download/${TMUX_VERSION}/tmux-${TMUX_VERSION}.tar.gz
+        wget -q -O tmux-${TMUX_VERSION}.tar.gz https://github.com/tmux/tmux/releases/download/${TMUX_MAJOR_VERSION}/tmux-${TMUX_VERSION}.tar.gz
 fi
 
 ## Configure and make dependencies
