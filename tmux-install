@@ -18,12 +18,29 @@ def log(msg):
 
 
 def get_available_versions():
-    return [ver.split("_")[0] for ver in VERSIONS]
+    distribution = get_distribution()
+    versions = list()
+    for version in VERSIONS:
+        curr_ver = version.split("_", maxsplit=1)
+        if not distribution in curr_ver[1]:
+            continue
+        if not curr_ver[0] in versions:
+            versions.append(curr_ver[0])
+    return versions
 
 
 def get_default_install_dir():
     return "%s/tmux-static" % os.environ["HOME"]
 
+
+def get_distribution():
+    system = platform.system().lower()
+    if system == "linux":
+        return "_".join([x.split()[0] for x in platform.linux_distribution()[:-1]])
+    if system == "darwin":
+        version = '.'.join(platform.mac_ver()[0].split(".")[0:2])
+        return "Darwin_%s" % version
+    
 
 def parser():
     arg_parser = argparse.ArgumentParser()
@@ -42,21 +59,22 @@ def parser():
     if not args.version:
         log("Specify a tmux version!")
         arg_parser.print_help()
+        sys.exit(1)
     return args
 
 
 def set_versions(tmux_version):
-    distribution = "_".join([x.split()[0] for x in platform.linux_distribution()[:-1]])
+    distribution = get_distribution()
 
     log("Checking dependancy for current distribution : %s" % distribution)
     versions = VERSIONS.get("%s_%s" % (tmux_version, distribution), {})
     if not versions:
-        log(" Your distribution has no valid versions set!")
-        sys.exit(1)
+        return False
 
     os.environ["TMUX_VERSION"] = tmux_version
     for env_var in ["NCURSES_VERSION", "LIBEVENT_VERSION"]:
         os.environ[env_var] = versions.get(env_var)
+    return True
 
 
 def set_install_dir(install_dir):
@@ -74,9 +92,12 @@ def run_script():
 
 def main():
     args = parser()
-    set_versions(args.version)
+    if not set_versions(args.version):
+        log(" Your distribution has no valid versions set!")
+        sys.exit(1)
     set_install_dir(args.install_dir)
     run_script()
+    
 
 
 main()
