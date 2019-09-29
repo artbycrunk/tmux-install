@@ -16,7 +16,7 @@ export PKG_CONFIG_PATH="${TMUXTARGET}/lib/pkgconfig"
 
 #function for colored console output
 output_info () {
-    echo -e "\e[93m$1\e[0m"
+    echo -e "\x1B[93m$1\x1B[0m"
 }
 
 output_info "tmux-${TMUX_VERSION} will be installed in : ${TMUXTARGET}"
