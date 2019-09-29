@@ -5,6 +5,7 @@
 [ "${TMUX_VERSION}" ] || TMUX_VERSION=2.9a
 [ "${NCURSES_VERSION}" ] || NCURSES_VERSION=6.1
 [ "${LIBEVENT_VERSION}" ] || LIBEVENT_VERSION=2.1.8 
+[ "${TMUX_STATIC}" ] || TMUX_STATIC=--enable-static
 
 TMPDIR=${TMUX_INSTALL_DIR}/tmux-tmp-${TMUX_VERSION}
 BASEDIR=${TMUX_INSTALL_DIR}
@@ -70,8 +71,9 @@ if [ ! -d tmux-${TMUX_VERSION} ]; then
         output_info "Extracting : tmux-${TMUX_VERSION}.tar.gz"
         tar -xzf tmux-${TMUX_VERSION}.tar.gz
         cd tmux-${TMUX_VERSION}
-        ./configure --prefix=$TMUXTARGET --enable-static CFLAGS="-I${TMUXTARGET}/include -I${TMUXTARGET}/include/ncurses" LDFLAGS="-L${TMUXTARGET}/lib -L${TMUXTARGET}/include -L${TMUXTARGET}/include/ncurses -L/usr/lib64" LIBEVENT_CFLAGS="-I${TMUXTARGET}/include" LIBEVENT_LIBS="-L${TMUXTARGET}/lib -levent" LIBTINFO_CFLAGS="-I${TMUXTARGET}/include" LIBTINFO_LIBS="-L${TMUXTARGET}/lib -lncurses"
-        output_info "Installing : tmux-${TMUX_VERSION}"
+        ./configure --prefix=$TMUXTARGET $TMUX_STATIC CPPFLAGS="-I${TMUXTARGET}/include" LIBS="-lresolv" CFLAGS="-I${TMUXTARGET}/include -I${TMUXTARGET}/include/ncurses" LDFLAGS="-L${TMUXTARGET}/lib -L${TMUXTARGET}/include -L${TMUXTARGET}/include/ncurses -L/usr/lib64" LIBEVENT_CFLAGS="-I${TMUXTARGET}/include" LIBEVENT_LIBS="-L${TMUXTARGET}/lib -levent" LIBTINFO_CFLAGS="-I${TMUXTARGET}/include" LIBTINFO_LIBS="-L${TMUXTARGET}/lib -lncurses"
+
+        output_info "Installing : tmux-${TMUX_VERSION} ${TMUX_STATIC}"
         make && make install
 fi
 
