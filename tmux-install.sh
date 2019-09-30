@@ -1,4 +1,4 @@
-#!/bin/bash
+#! /usr/bin/env bash
 
 [ "${TMUX_INSTALL_DIR}" ] || TMUX_INSTALL_DIR=${HOME}/tmux-static
 
