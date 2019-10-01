@@ -75,8 +75,9 @@ def set_versions(tmux_version):
         return False
 
     os.environ["TMUX_VERSION"] = tmux_version
-    for env_var in ["NCURSES_VERSION", "LIBEVENT_VERSION"]:
-        os.environ[env_var] = versions.get(env_var)
+    for env_var in ["NCURSES_VERSION", "LIBEVENT_VERSION", "TMUX_STATIC"]:
+        if versions.get(env_var, None):
+            os.environ[env_var] = versions.get(env_var)
     return True
 
 
