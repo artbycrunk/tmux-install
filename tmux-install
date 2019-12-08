@@ -45,24 +45,32 @@ def get_distribution():
         return "Darwin_%s" % version
     
 
+def parser_help(arg_parser, msg=None):
+    if msg:
+        log(msg)
+    arg_parser.print_help()
+    sys.exit(1)
+
+
 def parser():
-    arg_parser = argparse.ArgumentParser()
-    arg_parser.add_argument(
-        "--version",
-        action="store",
-        help="Set the tmux version to install. Default: latest",
-        choices=get_available_versions(),
-    )
-    arg_parser.add_argument(
-        "--install-dir",
-        action="store",
-        help="Set the install dir. Default: %s" % get_default_install_dir(),
-    )
-    args = arg_parser.parse_args()
-    if not args.version:
-        log("Specify a tmux version!")
-        arg_parser.print_help()
-        sys.exit(1)
+    try:
+        arg_parser = argparse.ArgumentParser()
+        arg_parser.add_argument(
+            "--version",
+            action="store",
+            help="Set the tmux version to install. Default: latest",
+            choices=get_available_versions(),
+        )
+        arg_parser.add_argument(
+            "--install-dir",
+            action="store",
+            help="Set the install dir. Default: %s" % get_default_install_dir(),
+        )
+        args = arg_parser.parse_args()
+        if not args.version:
+            parser_help(arg_parser, msg="Specify a tmux version!")
+    except Exception as e:
+        parser_help(arg_parser, msg=str(e))
     return args
 
 
