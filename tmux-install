@@ -13,6 +13,9 @@ VERSIONS = {
     "2.9a_Darwin_10.14": {"NCURSES_VERSION": "6.1", "LIBEVENT_VERSION": "2.1.8", "TMUX_STATIC": ""},
     "3.0-rc5_Ubuntu_18.04": {"NCURSES_VERSION": "6.1", "LIBEVENT_VERSION": "2.1.11"},
     "3.0-rc5_Darwin_10.14": {"NCURSES_VERSION": "6.1", "LIBEVENT_VERSION": "2.1.11", "TMUX_STATIC": ""},
+    "3.0_Ubuntu_18.04": {"NCURSES_VERSION": "6.1", "LIBEVENT_VERSION": "2.1.11"},
+    "3.0a_Ubuntu_18.04": {"NCURSES_VERSION": "6.1", "LIBEVENT_VERSION": "2.1.11"},
+
 }
 
 
